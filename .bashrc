@@ -63,13 +63,6 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-# colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -84,6 +77,70 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
+# git aliases
+
+cdr() {
+
+	root_dir="$(git rev-parse --show-toplevel)/"
+	cd $root_dir$1
+	
+}
+
+alias grepc='grep -Rn --include=\*{.c,.h,.cpp,.keys} '
+
+
+# ISI aliaes/functions
+appsinit() {
+  cdr build/output/images/pc/app_fs/apps/bin/
+  sudo ./appsinit.sh
+}
+
+build_atlas(){
+  cdr 
+  make -j8
+  cd -
+}
+
+build_middleman_pc(){
+  cdr domain/app/legacy_middleman_app/src/algorithm/build/linux/pc
+  ./build.sh
+  cd -
+}
+
+build_middleman_dwx(){
+  cdr domain/app/legacy_middleman_app/src/algorithm/build/linux/dwx
+  ./build.sh
+  cd -
+}
+
+build_supervisor(){
+  cdr legacy_sysg7x/shared/linux/etc/
+  source setenv_linux.sh
+  cd -
+  cdr legacy_sysg7x/shared/linux/images/isi4000/supervisor_target/
+  make -j8
+  cd -
+}
+
+build_8x_pc() {
+  build_atlas
+  build_middleman_pc
+}
+
+build_8x_dwx() {
+  build_atlas
+  build_middleman_dwx
+}
+
+build_all_dwx() {
+  build_supervisor
+  build_8x_dwx
+}
+
+build_all_pc(){
+  build_supervisor
+  build_8x_pc
+}
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
