@@ -77,29 +77,37 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
-# git aliases
 
+##############
+# git aliases
+##############
+# cd to the root (r)  then into a subdirectory
+# example 1: cdr will take you to sysg8x, no matter where you are in your tree
+# example 2: "cdr framework/lib" will take you to sysg8x/framework/lib no matter where you are in our tree
 cdr() {
 
 	root_dir="$(git rev-parse --show-toplevel)/"
 	cd $root_dir$1
-	
+
 }
 
-alias grepc='grep -Rn --include=\*{.c,.h,.cpp,.keys} '
-
-
-# ISI aliaes/functions
-appsinit() {
-  cdr build/output/images/pc/app_fs/apps/bin/
-  sudo ./appsinit.sh
-}
-
+##############
+# ISI aliases/functions
+##############
+# build specific parts of the tree from anywhere in your atlas repository
 build_atlas(){
-  cdr 
+  cdr
   make -j8
   cd -
 }
+
+
+build_pc(){
+  cdr build/images/pc
+  make
+  cd -
+}
+
 
 build_middleman_pc(){
   cdr domain/app/legacy_middleman_app/src/algorithm/build/linux/pc
@@ -107,40 +115,34 @@ build_middleman_pc(){
   cd -
 }
 
+
 build_middleman_dwx(){
   cdr domain/app/legacy_middleman_app/src/algorithm/build/linux/dwx
   ./build.sh
   cd -
 }
 
-build_supervisor(){
-  cdr legacy_sysg7x/shared/linux/etc/
-  source setenv_linux.sh
-  cd -
-  cdr legacy_sysg7x/shared/linux/images/isi4000/supervisor_target/
-  make -j8
-  cd -
-}
 
-build_8x_pc() {
-  build_atlas
-  build_middleman_pc
-}
+alias sysg8x='cd ~/sysg8x'
+###########
+# grep aliases
+###########
+# search all c, cpp, python, .keys and cmake files
+alias grepsrc='grep -Rn --include=\*{.c,.h,.cpp,.keys,.m,CMakeLists.txt,.py,.cmake} '
 
-build_8x_dwx() {
-  build_atlas
-  build_middleman_dwx
-}
+# search all c related files (c, cpp, cmake)
+alias grepc='grep -Rn --include=\*{.c,.h,.cpp,CMakeLists.txt,.cmake} '
 
-build_all_dwx() {
-  build_supervisor
-  build_8x_dwx
-}
+# search all matlab files
+alias grepm='grep -Rn --include=\*.m'
 
-build_all_pc(){
-  build_supervisor
-  build_8x_pc
-}
+# search all python files
+alias greppy='grep -Rn --include=\*.py '
+
+
+
+
+
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -151,3 +153,21 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+export WORKON_HOME=/home/linuxdev/venv
+source /usr/local/bin/virtualenvwrapper.sh
+export WORKON_HOME=/home/linuxdev/venv
+source /usr/local/bin/virtualenvwrapper.sh
+export WORKON_HOME=/home/linuxdev/venv
+source /usr/local/bin/virtualenvwrapper.sh
+export WORKON_HOME=/home/linuxdev/venv
+source /usr/local/bin/virtualenvwrapper.sh
+export WORKON_HOME=/home/linuxdev/venv
+source /usr/local/bin/virtualenvwrapper.sh
+export WORKON_HOME=/home/linuxdev/venv
+source /usr/local/bin/virtualenvwrapper.sh
+export WORKON_HOME=/home/linuxdev/venv
+source /usr/local/bin/virtualenvwrapper.sh
+export WORKON_HOME=/home/linuxdev/venv
+source /usr/local/bin/virtualenvwrapper.sh
+export WORKON_HOME=/home/linuxdev/venv
+source /usr/local/bin/virtualenvwrapper.sh
