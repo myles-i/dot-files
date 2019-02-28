@@ -16,8 +16,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=100000
+HISTFILESIZE=200000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -91,39 +91,64 @@ cdr() {
 
 }
 
+find_closest_pull_request(){
+  git log --reverse --pretty=oneline --abbrev-commit --grep="Merge pull request" -n 1 --ancestry-path develop ^$1
+}
+
+show_pull_request_log() {
+  git log --pretty=format:"%h" --abbrev-commit $1 | xargs -I '{}' git log --reverse --pretty=oneline --abbrev-commit --grep="Merge pull request" -n 1 --ancestry-path develop ^{}
+}
+
+
 ##############
-# ISI aliases/functions
+# ISI aliases/functions 
 ##############
 # build specific parts of the tree from anywhere in your atlas repository
+slimshell(){
+  cdr
+  run/SlimShell.sh "$@" & # allow arguments to be passed to slimshell
+  cd -
+  return 0
+}
+
+launch_desktop_nodes(){
+  cdr
+  run/launch_desktop_nodes.sh "$@"
+  cd -
+  return 0
+}
+
+desktop_regression_test(){
+  cdr
+  run/desktop_regression_test.sh "$@"  # allow arguments to be passed to desktop_regression_test
+  cd -
+  return 0
+}
+
+alias close_desktop_nodes="cdr; run/close_desktop_nodes.sh; cd -"
+alias update_local_tools="cdr build/scripts/; ./update_local_tools.py; cd -"
+alias fixup_linuxvm_mounts="cdr; ./build/scripts/fixup_linuxvm_mounts.sh; cd -"
+alias export_tree="cdr; build/scripts/export_tree.sh; cd -"
+alias y_mount_check="ls -l /isi/app_fs/data/"
+alias matlab_sys="cdr; cd domain/app/matlab_sys;"
+
 build_atlas(){
   cdr
-  make -j8
+  make -j7
   cd -
 }
 
 
 build_pc(){
-  cdr build/images/pc
-  make
-  cd -
-}
-
-
-build_middleman_pc(){
-  cdr domain/app/legacy_middleman_app/src/algorithm/build/linux/pc
-  ./build.sh
-  cd -
-}
-
-
-build_middleman_dwx(){
-  cdr domain/app/legacy_middleman_app/src/algorithm/build/linux/dwx
-  ./build.sh
+  cdr domain/images/pc/
+  make -j7
   cd -
 }
 
 
 alias sysg8x='cd ~/sysg8x'
+alias sysg8x_develop='cd ~/sysg8x_develop'
+alias sysg8x_master='cd ~/sysg8x_master'
 ###########
 # grep aliases
 ###########
@@ -153,21 +178,3 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-export WORKON_HOME=/home/linuxdev/venv
-source /usr/local/bin/virtualenvwrapper.sh
-export WORKON_HOME=/home/linuxdev/venv
-source /usr/local/bin/virtualenvwrapper.sh
-export WORKON_HOME=/home/linuxdev/venv
-source /usr/local/bin/virtualenvwrapper.sh
-export WORKON_HOME=/home/linuxdev/venv
-source /usr/local/bin/virtualenvwrapper.sh
-export WORKON_HOME=/home/linuxdev/venv
-source /usr/local/bin/virtualenvwrapper.sh
-export WORKON_HOME=/home/linuxdev/venv
-source /usr/local/bin/virtualenvwrapper.sh
-export WORKON_HOME=/home/linuxdev/venv
-source /usr/local/bin/virtualenvwrapper.sh
-export WORKON_HOME=/home/linuxdev/venv
-source /usr/local/bin/virtualenvwrapper.sh
-export WORKON_HOME=/home/linuxdev/venv
-source /usr/local/bin/virtualenvwrapper.sh
