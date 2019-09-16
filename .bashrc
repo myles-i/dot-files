@@ -43,9 +43,7 @@ esac
 
 # show git branch and status if exist
 parse_git_branch() {
-
      git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
-
 }
 
 export PS1="\u@\h \[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
@@ -68,42 +66,39 @@ fi
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
 
 ##############
-# git aliases
+# git aliases/function
 ##############
+trees_root="/home/$USER"
+
+sysg8x(){
+  if [ $# -eq 0 ]
+    then
+      cd "$trees_root/sysg8x"
+    else
+      cd "$trees_root/sysg8x_$1"
+  fi
+}
+
 # cd to the root (r)  then into a subdirectory
 # example 1: cdr will take you to sysg8x, no matter where you are in your tree
 # example 2: "cdr framework/lib" will take you to sysg8x/framework/lib no matter where you are in our tree
-cdr() {
-
+cdr(){
 	root_dir="$(git rev-parse --show-toplevel)/"
 	cd $root_dir$1
-
 }
-
-find_closest_pull_request(){
-  git log --reverse --pretty=oneline --abbrev-commit --grep="Merge pull request" -n 1 --ancestry-path develop ^$1
-}
-
-show_pull_request_log() {
-  git log --pretty=format:"%h" --abbrev-commit $1 | xargs -I '{}' git log --reverse --pretty=oneline --abbrev-commit --grep="Merge pull request" -n 1 --ancestry-path develop ^{}
-}
-
-
 ##############
 # ISI aliases/functions 
 ##############
 # build specific parts of the tree from anywhere in your atlas repository
+alias close_desktop_nodes="cdr; run/close_desktop_nodes.sh; cd -"
+alias update_local_tools="cdr; build/scripts/update_local_tools.py; cd -"
+alias export_tree="cdr; build/scripts/export_tree.sh; cd -"
+alias y_mount_check="ls -l /isi/app_fs/data/"
+alias matlab_sys="cdr domain/app/matlab_sys;"
+alias bs="screen -Rd build_screen"
+
 slimshell(){
   cdr
   run/SlimShell.sh "$@" & # allow arguments to be passed to slimshell
@@ -125,30 +120,21 @@ desktop_regression_test(){
   return 0
 }
 
-alias close_desktop_nodes="cdr; run/close_desktop_nodes.sh; cd -"
-alias update_local_tools="cdr build/scripts/; ./update_local_tools.py; cd -"
-alias fixup_linuxvm_mounts="cdr; ./build/scripts/fixup_linuxvm_mounts.sh; cd -"
-alias export_tree="cdr; build/scripts/export_tree.sh; cd -"
-alias y_mount_check="ls -l /isi/app_fs/data/"
-alias matlab_sys="cdr; cd domain/app/matlab_sys;"
+
 
 build_atlas(){
   cdr
-  make -j7
+  make
   cd -
 }
 
 
 build_pc(){
   cdr domain/images/pc/
-  make -j7
+  make
   cd -
 }
 
-
-alias sysg8x='cd ~/sysg8x'
-alias sysg8x_develop='cd ~/sysg8x_develop'
-alias sysg8x_master='cd ~/sysg8x_master'
 ###########
 # grep aliases
 ###########
@@ -164,8 +150,10 @@ alias grepm='grep -Rn --include=\*.m'
 # search all python files
 alias greppy='grep -Rn --include=\*.py '
 
-
-
+#################
+# random aliases
+#################
+alias code='code -g'
 
 
 # enable programmable completion features (you don't need to enable
